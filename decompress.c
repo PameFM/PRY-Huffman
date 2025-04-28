@@ -10,7 +10,7 @@ typedef struct HuffmanNode {
     struct HuffmanNode *right; // Puntero a hijo derecho (bit 1)
 } HuffmanNode;
 
-// Reconstruye el árbol de Huffman a partir de los códigos
+// Reconstruye el árbol de Huffman a partir de los codigos
 HuffmanNode *rebuildHuffmanTree(FILE *codesFile) {
     HuffmanNode *root = malloc(sizeof(HuffmanNode));
     root->left = root->right = NULL;

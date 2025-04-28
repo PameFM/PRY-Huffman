@@ -21,6 +21,37 @@
 #undef main          
 
 
+// Empaqueta bits y escribe bytes reales en lugar de '0'/'1' de texto
+void compressToBinaryFile(FILE *in, FILE *out, char *codes[256]) {
+    rewind(in);  // vuelve al inicio
+
+    unsigned char buffer = 0;
+    int bitCount = 0;
+    int c;
+
+    while ((c = fgetc(in)) != EOF) {
+        char *code = codes[(unsigned char)c];
+        for (int i = 0; code[i] != '\0'; i++) {
+            buffer = (buffer << 1) | (code[i] == '1');
+            bitCount++;
+            if (bitCount == 8) {
+                fwrite(&buffer, 1, 1, out);
+                buffer = 0;
+                bitCount = 0;
+            }
+        }
+    }
+    // rellena con ceros si quedó parcial
+    if (bitCount > 0) {
+        buffer <<= (8 - bitCount);
+        fwrite(&buffer, 1, 1, out);
+    }
+}
+
+
+
+
+
 
 void compressFile(const char *inName, const char *outName) {
 
@@ -39,11 +70,11 @@ void compressFile(const char *inName, const char *outName) {
 
     generateCodes(root, codes, codeBuf, 0);
 
-    FILE *out = fopen(outName, "w");
+    FILE *out = fopen(outName, "wb");  // modo binario
 
     if (!out) { perror(outName); fclose(in); freeHuffmanTree(root); return; }
 
-    compressToTextFile(in, out, codes);
+    compressToBinaryFile(in, out, codes);  // ahora binario
 
     fclose(in);
     fclose(out);

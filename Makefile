@@ -16,7 +16,7 @@ INPUT_DIRS := parte1 parte2
 .PHONY: all clean run-pthread
 
 all: $(PROG_PTHREAD)
-	@echo "✔  Ejecutable listo: ./$(PROG_PTHREAD)"
+	@echo " Ejecutable listo: ./$(PROG_PTHREAD)"
 	@echo "  Usa 'make run-pthread' para comprimir todo"
 
 # Compila la versión pthread
@@ -27,7 +27,7 @@ $(PROG_PTHREAD): $(SRCS_PTHREAD)
 
 # Borra binarios y salidas viejas
 clean:
-	@echo "🧹 Limpiando binarios y carpeta salida/"
+	@echo "Limpiando binarios y carpeta salida/"
 	rm -f $(PROG_PTHREAD)
 	rm -rf salida
 	@echo "  → Limpieza completa"
@@ -36,6 +36,6 @@ clean:
 run-pthread: clean $(PROG_PTHREAD)
 	@echo "Creando carpeta de salida/ y lanzando hilos..."
 	mkdir -p salida
-	@echo " 📂 Procesando parte1 y parte2 de golpe"
+	@echo " Procesando parte1 y parte2"
 	./$(PROG_PTHREAD) parte1/*.txt parte2/*.txt
-	@echo "✅ Todo listo en ./salida/"
+	@echo "Todo listo en ./salida/"

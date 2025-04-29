@@ -1,41 +1,41 @@
-# Makefile proyecto Huffman
+# Makefile 
 
-CC        := gcc
-CFLAGS    := -std=c11 -D_GNU_SOURCE -D_POSIX_C_SOURCE=199309L -O2
-LDFLAGS   := -lpthread
+CC       := gcc
+CFLAGS   := -std=c11 -D_GNU_SOURCE -D_POSIX_C_SOURCE=199309L -O2
+LDFLAGS  := -lpthread
 
-# Nombre del ejecutable pthread
-PROG_PTHREAD := compress_pthread
+BINDIR   := pthread
+COMPBIN  := $(BINDIR)/compress_all
+DECBIN   := $(BINDIR)/decompress_all
 
-# Solo el fuente de la versión pthread (que incluye compress.c)
-SRCS_PTHREAD := compress_pthread.c
+COMPSRC  := $(BINDIR)/compress_pthread_all.c
+DECSRC   := $(BINDIR)/decompress_pthread_all.c
 
-# Carpetas de entrada con los 100 libros
-INPUT_DIRS := parte1 parte2
+.PHONY: all pall prun pdecomp pclean
 
-.PHONY: all clean run-pthread
+all: pall pdecomp
 
-all: $(PROG_PTHREAD)
-	@echo " Ejecutable listo: ./$(PROG_PTHREAD)"
-	@echo "  Usa 'make run-pthread' para comprimir todo"
+pall: $(COMPBIN) $(DECBIN)
 
-# Compila la versión pthread
-$(PROG_PTHREAD): $(SRCS_PTHREAD)
-	@echo "Compilando mi pthread..."
-	$(CC) $(CFLAGS) -o $@ $(SRCS_PTHREAD) $(LDFLAGS)
-	@echo "  → $@ compilado correctamente"
+$(COMPBIN): $(COMPSRC)
+	@echo "🔨 pthread: compilar compresión → $@"
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-# Borra binarios y salidas viejas
-clean:
-	@echo "Limpiando binarios y carpeta salida/"
-	rm -f $(PROG_PTHREAD)
-	rm -rf salida
-	@echo "  → Limpieza completa"
+$(DECBIN): $(DECSRC)
+	@echo "🔨 pthread: compilar descompresión → $@"
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-# Corre la version pthread contra todos los .txt
-run-pthread: clean $(PROG_PTHREAD)
-	@echo "Creando carpeta de salida/ y lanzando hilos..."
+prun: $(COMPBIN)
+	@echo "🚀 pthread: compresión…"
 	mkdir -p salida
-	@echo " Procesando parte1 y parte2"
-	./$(PROG_PTHREAD) parte1/*.txt parte2/*.txt
-	@echo "Todo listo en ./salida/"
+	$(COMPBIN) pthread/parte1/*.txt pthread/parte2/*.txt
+
+pdecomp: $(DECBIN)
+	@echo "🚀 pthread: descompresión…"
+	mkdir -p salida/descomp
+	$(DECBIN)
+
+pclean:
+	@echo "🧹 pthread: limpiando…"
+	rm -f $(COMPBIN) $(DECBIN)
+	rm -rf salida
